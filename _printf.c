@@ -1,84 +1,108 @@
 #include "main.h"
 
-int _putchar(char c);
+/**
+ * _putchar - writes a character to stdout
+ * @c: character to write
+ *
+ * Return: 1 on success, -1 on error
+ */
+int _putchar(char c)
+{
+	return (write(1, &c, 1));
+}
 
 /**
- * _printf - prints formatted output to stdout
+ * _printf - produces output according to a format
+ * @format: format string containing zero or more directives
+ * @...: variable number of arguments to print
  *
- * @format: format string
- * @...: variadic arguments
- *
- * Return: number of characters printed
+ * Return: number of characters printed (excluding terminating null byte)
  */
 int _printf(const char *format, ...)
 {
-	va_list args;
 	int count = 0;
+	va_list args;
 
 	va_start(args, format);
 
-	while (*format != '\0')
+	while (format && *format)
 	{
 		if (*format == '%')
 		{
 			format++;
+
 			switch (*format)
 			{
 				case 'c':
-					{
-						int c = va_arg(args, int);
-
-						_putchar(c);
-						count++;
-						break;
-					}
+					count += _putchar(va_arg(args, int));
+					break;
 				case 's':
-					{
-						char *s = va_arg(args, char *);
-
-					if (s == NULL)
-						s = "(nil)";
-					while (*s != '\0')
-					{
-						_putchar(*s);
-						count++;
-						s++;
-						}
-						break;
-					}
+					count += _printstr(va_arg(args, char *));
+					break;
 				case '%':
-					_putchar('%');
-					count++;
+					count += _putchar('%');
+					break;
+				case 'd':
+				case 'i':
+					count += _printnum(va_arg(args, int));
 					break;
 				default:
-					_putchar('%');
-					count++;
-					_putchar(*format);
-					count++;
+					count += _putchar('%');
+					count += _putchar(*format);
 					break;
 			}
+			format++;
 		}
 		else
-		{
-			_putchar(*format);
-			count++;
-		}
-		format++;
+			count += _putchar(*format++);
 	}
 
 	va_end(args);
+	return (count);
+}
+
+/**
+ * _printstr - prints a string to stdout
+ * @str: string to print
+ *
+ * Return: number of characters printed (excluding terminating null byte)
+ */
+int _printstr(char *str)
+{
+	int count = 0;
+
+	if (str == NULL)
+		str = "(null)";
+
+	while (*str)
+		count += _putchar(*str++);
 
 	return (count);
 }
 
 /**
- * _putchar - writes the character c to stdout
- * @c: The character to print
+ * _printnum - prints a number to stdout
+ * @num: number to print
  *
- * Return: On success 1.
- *         On error, -1 is returned, and errno is set appropriately.
+ * Return: number of characters printed (excluding terminating null byte)
  */
-int _putchar(char c)
+int _printnum(int num)
 {
-	return (write(1, &c, 1));
+	unsigned int abs_val, digit, count = 0;
+
+	if (num < 0)
+	{
+		count += _putchar('-');
+		abs_val = -num;
+	}
+	else
+		abs_val = num;
+
+	if (abs_val / 10)
+		count += _printnum(abs_val / 10);
+
+	digit = abs_val % 10;
+	count += _putchar(digit + '0');
+
+	return (count);
 }
