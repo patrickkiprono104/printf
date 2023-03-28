@@ -1,11 +1,13 @@
 #include "main.h"
 
 int _putchar(char c);
-int _print_str(char *str);
 
 /**
  * _printf - prints formatted output to stdout
+ *
  * @format: format string
+ * @...: variadic arguments
+ *
  * Return: number of characters printed
  */
 int _printf(const char *format, ...)
@@ -15,7 +17,7 @@ int _printf(const char *format, ...)
 
 	va_start(args, format);
 
-	while (*format)
+	while (*format != '\0')
 	{
 		if (*format == '%')
 		{
@@ -23,23 +25,43 @@ int _printf(const char *format, ...)
 			switch (*format)
 			{
 				case 'c':
-					count += _putchar(va_arg(args, int));
-					break;
+					{
+						int c = va_arg(args, int);
+
+						_putchar(c);
+						count++;
+						break;
+					}
 				case 's':
-					count += _print_str(va_arg(args, char *));
-					break;
+					{
+						char *s = va_arg(args, char *);
+
+					if (s == NULL)
+						s = "(nil)";
+					while (*s != '\0')
+					{
+						_putchar(*s);
+						count++;
+						s++;
+						}
+						break;
+					}
 				case '%':
-					count += _putchar('%');
+					_putchar('%');
+					count++;
 					break;
 				default:
-					count += _putchar('%');
-					count += _putchar(*format);
+					_putchar('%');
+					count++;
+					_putchar(*format);
+					count++;
 					break;
 			}
 		}
 		else
 		{
-			count += _putchar(*format);
+			_putchar(*format);
+			count++;
 		}
 		format++;
 	}
@@ -52,32 +74,11 @@ int _printf(const char *format, ...)
 /**
  * _putchar - writes the character c to stdout
  * @c: The character to print
+ *
  * Return: On success 1.
+ *         On error, -1 is returned, and errno is set appropriately.
  */
 int _putchar(char c)
 {
 	return (write(1, &c, 1));
-}
-
-/**
- * _print_str - prints a string
- * @str: the string to print
- * Return: the number of characters printed
- */
-int _print_str(char *str)
-{
-	int count = 0;
-
-	if (str == NULL)
-	{
-		str = "(null)";
-	}
-
-	while (*str)
-	{
-		count += _putchar(*str);
-		str++;
-	}
-
-	return (count);
 }
