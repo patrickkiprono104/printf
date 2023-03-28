@@ -1,6 +1,7 @@
 #include "main.h"
 
 int _putchar(char c);
+int _print_str(char *str);
 
 /**
  * _printf - prints formatted output to stdout
